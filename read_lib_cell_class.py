@@ -4,9 +4,14 @@ import re
 # The plan here is to maybe set a chunk size of maybe 100 lines
 
 class Library:
-    def __init__(self):
-        pass
-            
+    def __init__(self,description):
+        self.description = description
+    
+    # This is a test method to check if something is actually an object or not
+    # REMEMBER THIS IS A TEST METHOD 
+    def explode(self):
+        print("EXPLODED")
+
 class Cell(Library):
     def __init__(self):
         pass 
@@ -35,7 +40,7 @@ class LibertyParser:
     
     def parse_header(self,output_path = None):
         '''
-        Either returns the header of a .lib file, or writes it to a user specified location using output_path
+        Returns a Library Object with 'description' as the header of the .lib file
         '''
         for line in self.file:
             # If not the first cell
@@ -48,17 +53,19 @@ class LibertyParser:
         if self.header_text.endswith("\n"):
             self.header_text = self.header_text[:-1]
 
-        # Allows for an optional argument that specifies where to store it
-        if output_path:
-            with open(output_path,"w") as file:
-                file.write(self.header_text)
-        else:
-            return self.header_text
+        # Writes the header out somewhere, not currently in use 
+        # if output_path:
+        #    with open(output_path,"w") as file:
+        #        file.write(self.header_text)
+
+        return_object = Library(self.header_text)
+        return return_object
+
     def close_file(self):
-
-
         self.file.close()
+
+# Test code
 myFile = LibertyParser('example.lib')
-var1 =myFile.parse_header()
-myFile.close_file()
+myObject = myFile.parse_header()
+
     
