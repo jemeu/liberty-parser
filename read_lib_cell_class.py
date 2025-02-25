@@ -38,7 +38,7 @@ class LibertyParser:
     def __next__(self):
         pass
     
-    def parse_header(self,output_path = None):
+    def parse_header(self):
         '''
         Returns a Library Object with 'description' as the header of the .lib file
         '''
@@ -52,11 +52,6 @@ class LibertyParser:
         # (as blank lines will still have a newline character at the end, resulting in two lines being printed)                   
         if self.header_text.endswith("\n"):
             self.header_text = self.header_text[:-1]
-
-        # Writes the header out somewhere, not currently in use 
-        # if output_path:
-        #    with open(output_path,"w") as file:
-        #        file.write(self.header_text)
 
         return_object = Library(self.header_text)
         return return_object
