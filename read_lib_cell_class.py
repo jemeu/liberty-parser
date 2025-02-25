@@ -26,6 +26,7 @@ class Pin(Cell):
 class LibertyParser:
     def __init__(self, lib_path:str):
         self.lib_path = lib_path
+
         # Don't know whether this should be a string or a list
         self.header_text = ""
 
@@ -36,7 +37,8 @@ class LibertyParser:
         return self
 
     def __next__(self):
-        pass
+        # This needs to iterate to find each cell in chunks
+        self.cell = "Something needs to go here"
     
     def parse_header(self):
         '''
@@ -54,7 +56,16 @@ class LibertyParser:
             self.header_text = self.header_text[:-1]
 
         return_object = Library(self.header_text)
+        match_object = re.search(r'\((.*?)\)',return_object.description)        
+        return_object.description = match_object.group(1)
         return return_object
+    
+    def get_cell(self,cell):
+        '''
+        Returns the names of the cells, the contents etc
+        '''
+        re_pattern = r'cell\s*\((.*?)\)'
+        cell_names = re.findall(re_pattern,self)
 
     def close_file(self):
         self.file.close()
@@ -62,5 +73,11 @@ class LibertyParser:
 # Test code
 myFile = LibertyParser('example.lib')
 myObject = myFile.parse_header()
+print(myObject.description)
+myFile.close_file()
 
-    
+
+# Pattern for getting cell names
+repattern = r'cell\s*\((.*?)\)'
+patterntest2 = re.findall(repattern,'cell (a;lksdfjal;kdsfa;lsdjfa;dfaljfalf) { as}{  ]asds daadssas }  wfwfewf cell   cell(11111111)')
+print(patterntest2)
