@@ -19,13 +19,13 @@ class Pin(Cell):
 
 # Have a separate class for parsing the file from the library itself, don't know how to jfjfjfj
 class LibertyParser:
-    def __init__(self, file_path:str):
-        self.file_path = file_path
-
+    def __init__(self, lib_path:str):
+        self.lib_path = lib_path
         # Don't know whether this should be a string or a list
         self.header_text = ""
 
-        self.file = open(self.file_path,'r')
+        # REMEMBER TO CLOSE THE FILE AT SOME POINT
+        self.file = open(self.lib_path,'r')
 
     def __iter__(self):
         return self
@@ -54,8 +54,11 @@ class LibertyParser:
                 file.write(self.header_text)
         else:
             return self.header_text
+    def close_file(self):
 
+
+        self.file.close()
 myFile = LibertyParser('example.lib')
-myFile.parse_header()
-
+var1 =myFile.parse_header()
+myFile.close_file()
     
