@@ -4,9 +4,10 @@ import re
 # The plan here is to maybe set a chunk size of maybe 100 lines
 
 class Library:
-    def __init__(self,description):
+    def __init__(self,description = None,name = None):
         self.description = description
-    
+        self.name = name
+
     # This is a test method to check if something is actually an object or not
     # REMEMBER THIS IS A TEST METHOD 
     def explode(self):
@@ -38,8 +39,9 @@ class LibertyParser:
 
     def __next__(self):
         # This needs to iterate to find each cell in chunks
-        self.cell = "Something needs to go here"
+        self.cell = "Something needs   go here"
     
+    # Maybe put this in __init__?
     def parse_header(self):
         '''
         Returns a Library Object with 'description' as the header of the .lib file
@@ -55,11 +57,17 @@ class LibertyParser:
         if self.header_text.endswith("\n"):
             self.header_text = self.header_text[:-1]
 
+
+
         return_object = Library(self.header_text)
-        match_object = re.search(r'\((.*?)\)',return_object.description)        
-        return_object.description = match_object.group(1)
+        match_object = re.search(r'\((.*?)\)',self.header_text)        
+        return_object.name = match_object.group(1)
+        
+        return_object.description = self.header_text
         return return_object
+
     
+
     def get_cell(self,cell):
         '''
         Returns the names of the cells, the contents etc
@@ -73,11 +81,12 @@ class LibertyParser:
 # Test code
 myFile = LibertyParser('example.lib')
 myObject = myFile.parse_header()
+print(myObject.name)
 print(myObject.description)
 myFile.close_file()
 
 
 # Pattern for getting cell names
-repattern = r'cell\s*\((.*?)\)'
-patterntest2 = re.findall(repattern,'cell (a;lksdfjal;kdsfa;lsdjfa;dfaljfalf) { as}{  ]asds daadssas }  wfwfewf cell   cell(11111111)')
-print(patterntest2)
+# repattern = r'cell\s*\((.*?)\)'
+# patterntest2 = re.findall(repattern,'cell (a;lksdfjal;kdsfa;lsdjfa;dfaljfalf) { as}{  ]asds daadssas }  wfwfewf cell   cell(11111111)')
+# print(patterntest2)
