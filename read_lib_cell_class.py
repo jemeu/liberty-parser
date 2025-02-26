@@ -4,8 +4,8 @@ import re
 # The plan here is to maybe set a chunk size of maybe 100 lines
 
 class Library:
-    def __init__(self,description = None,name = None):
-        self.description = description
+    def __init__(self,definition = None,name = None):
+        self.definition = definition
         self.name = name
 
     # This is a test method to check if something is actually an object or not
@@ -39,12 +39,12 @@ class LibertyParser:
 
     def __next__(self):
         # This needs to iterate to find each cell in chunks
-        self.cell = "Something needs   go here"
+        self.cell = "Something needs go here"
     
     # Maybe put this in __init__?
     def parse_header(self):
         '''
-        Returns a Library Object with 'description' as the header of the .lib file
+        Returns a Library Object with 'definition' as the header of the .lib file
         '''
         for line in self.file:
             # If not the first cell
@@ -57,13 +57,11 @@ class LibertyParser:
         if self.header_text.endswith("\n"):
             self.header_text = self.header_text[:-1]
 
-
-
         return_object = Library(self.header_text)
         name_object = re.search(r'\((.*?)\)',self.header_text)       
 
         return_object.name = name_object.group(1)
-        return_object.description = self.header_text
+        return_object.definition = self.header_text
         return return_object
 
     
@@ -82,7 +80,7 @@ class LibertyParser:
 myFile = LibertyParser('example.lib')
 myObject = myFile.parse_header()
 print(myObject.name)
-print(myObject.description)
+print(myObject.definition)
 myFile.close_file()
 
 
