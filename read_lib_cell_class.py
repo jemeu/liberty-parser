@@ -60,9 +60,9 @@ class LibertyParser:
 
 
         return_object = Library(self.header_text)
-        match_object = re.search(r'\((.*?)\)',self.header_text)        
-        return_object.name = match_object.group(1)
-        
+        name_object = re.search(r'\((.*?)\)',self.header_text)       
+
+        return_object.name = name_object.group(1)
         return_object.description = self.header_text
         return return_object
 
