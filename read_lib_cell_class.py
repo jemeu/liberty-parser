@@ -4,11 +4,17 @@ import re
 # The plan here is to maybe set a chunk size of maybe 100 lines
 
 class Group:
+    '''
+    Parent class
+    '''
     def __init__(self):
         self.definition = None
 
 # Have a separate class for parsing the file from the library itself, don't know how to jfjfjfj
 class Library(Group):
+    '''
+    This represents the file as a whole
+    '''
     def __init__(self, lib_path:str, definition = None, name = None):
         self.lib_path = lib_path
         # self.definition = definition
@@ -47,6 +53,7 @@ class Library(Group):
         # This needs to iterate to find each cell in chunks
         self.cell = "Something needs go here"
     
+    # This is useless at the moment
     def get_cell(self,cell):
         '''
         Returns the names of the cells, the contents etc
