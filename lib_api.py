@@ -23,16 +23,25 @@ class Library(Group):
         # Don't know whether this should be a string or a list
         self.header_text = ""
 
+        self.readptr = None
+
         # REMEMBER TO CLOSE THE FILE AT SOME POINT
         self.file = open(self.lib_path,'r')
 
-        
+        # Puts the read pointer at the beginning of the file
+        # Might be faster to just set it to 0
+        self.readptr = self.file.tell()
+
         # Returns a Library Object with 'definition' as the header of the .lib file
         
         for line in self.file:
             # If not the first cell
             if not re.search('\s*cell\s*\(',line):
                 self.header_text += line
+
+                # This attempts to move the readpointer
+                self.readptr = self.file.tell()
+                print(self.readptr)
             else:
                 break
         # Removes any extra blank lines at the end of the file
