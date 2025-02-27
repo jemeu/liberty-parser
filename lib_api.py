@@ -22,7 +22,7 @@ class Library(Group):
         self.name = name
 
         # Don't know whether this should be a string or a list
-        self.header_text = ""
+        self.header_text = []
 
         self.readptr = None
 
@@ -33,22 +33,11 @@ class Library(Group):
         # Might be faster to just set it to 0
         self.readptr = self.file.tell()
 
-        # Returns a Library Object with 'definition' as the header of the .lib file
-        
-#         for line in self.file:
-#             # If not the first cell
-#             if not re.search('\s*cell\s*\(',line):
-#                 self.header_text += line
-# 
-#                 ## This attempts to move the readpointer
-#                 #self.readptr = self.file.tell()
-#                 #print(self.readptr)
-#             else:
-#                 break
-                
+        # Returns a Library Object with 'definition' as the header of the .lib file        
         # alternative loop using readline()
         line = self.file.readline()
-        while line:        
+        while line:       
+            # Writes the header 
             if not re.search('\s*cell\s*\(',line):
                 self.header_text += line
 
@@ -63,14 +52,13 @@ class Library(Group):
                 
         # Removes any extra blank lines at the end of the file
         # (as blank lines will still have a newline character at the end, resulting in two lines being printed)                   
-        if self.header_text.endswith("\n"):
+        if self.header_text[-1].endswith("\n"):
             self.header_text = self.header_text[:-1]
+
         name_object = re.search(r'\((.*?)\)',self.header_text)       
 
         self.name = name_object.group(1)
         self.definition = self.header_text
-        
-        
 
     def __iter__(self):
         return self
@@ -93,7 +81,7 @@ class Library(Group):
                         print(f"| creating new Cell object")
                         myCell = Cell()
                         myCell.name = match.group(1)
-                        myCell.definition += line
+                        myCell.definition.append(line) 
                     else:
                         # the syntax of the line doesn't conform to Liberty specification
                         print(f"syntax error on line '{line}'")
@@ -112,17 +100,12 @@ class Library(Group):
                 raise StopIteration             
             else:
                 # DEAL WITH THE EXTRA CLOSE CURLY BRACE THAT WILL BE IN THE DESCRIPTION
+
+                myCell.definition = myCell.definition.pop()
+                
                 return myCell
         else:
             return myCell
-        
-    # This is useless at the moment
-    def get_cell(self,cell):
-        '''
-        Returns the names of the cells, the contents etc
-        '''
-        re_pattern = r'cell\s*\((.*?)\)'
-        cell_names = re.findall(re_pattern,self)
 
     def close_file(self):
         self.file.close()
@@ -144,11 +127,13 @@ print(myLibrary.name)
 #print(myLibrary.definition)
 for myCell in myLibrary:
   print(f"|   found cell object called '{myCell.name}' (with {len(myCell.definition)}-byte definition)")
-  if myCell.name == "INV_X1N_A9PP96CTL_C20":
-      print(f"{myLibrary.definition}")
-      print(f"{myCell.definition}")
+  if myCell.name == "INV_X3N_A9PP96CTL_C20":
+    print(f"{myLibrary.definition}")
+    print(f"{myCell.definition}")
 
-print(vars(myCell))
+# This is temporary test code
+    temp_output = open('output.txt','w')
+    temp_output.write(myCell.definition)
 
 myLibrary.close_file()
 
