@@ -171,3 +171,7 @@ read_lib_cell.py
 # sw0 example file
 _default.sw0
 output.txt
+example2.txt
+lib_api_dv copy.py
+.gitignore
+lib_api_dv.py
