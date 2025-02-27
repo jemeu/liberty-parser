@@ -36,17 +36,22 @@ class Library(Group):
         # Returns a Library Object with 'definition' as the header of the .lib file        
         # alternative loop using readline()
         line = self.file.readline()
-        while line:       
-            # Writes the header 
-            if not re.search('\s*cell\s*\(',line):
-                self.header_text += line
+        while line: 
 
-                # This attempts to move the readpointer
-                self.readptr = self.file.tell()
-                print(self.readptr)
-            else:
+            # Writes out header
+            if re.search('\s*library\s*\(',line):
+                self.header_text.append(line) 
+                name_object = re.search(r'\((.*?)\)',line)
+                self.name = name_object.group(1)
+       
+            # Writes out cells 
+            elif re.search('\s*cell\s*\(',line):
                 # don't update self.readptr, leaving it at the start of the line just read  
-                break
+                break                
+                
+            else:
+                self.header_text.append(line)
+                         
             self.readptr = self.file.tell()        
             line = self.file.readline()
                 
@@ -55,9 +60,6 @@ class Library(Group):
         if self.header_text[-1].endswith("\n"):
             self.header_text = self.header_text[:-1]
 
-        name_object = re.search(r'\((.*?)\)',self.header_text)       
-
-        self.name = name_object.group(1)
         self.definition = self.header_text
 
     def __iter__(self):
@@ -85,24 +87,27 @@ class Library(Group):
                     else:
                         # the syntax of the line doesn't conform to Liberty specification
                         print(f"syntax error on line '{line}'")
+                        self.close_file()
                         raise StopIteration
                 else:
                     break
             else:
                 # don't update self.readptr, leaving it at the start of the line just read  
-                myCell.definition += line
+                myCell.definition.append(line)
+                
             self.readptr = self.file.tell()  
             line = self.file.readline()
         
         # either no more lines to read, or an entire cell has been located
         if line == "":
             if myCell == None:
+                self.close_file()
                 raise StopIteration             
             else:
                 # DEAL WITH THE EXTRA CLOSE CURLY BRACE THAT WILL BE IN THE DESCRIPTION
+                print("Popping extra curly brace")
+                myCell.definition.pop()
 
-                myCell.definition = myCell.definition.pop()
-                
                 return myCell
         else:
             return myCell
@@ -110,10 +115,19 @@ class Library(Group):
     def close_file(self):
         self.file.close()
 
+    def export(self,path):
+        with open(path,'w') as output_file:
+            # Write header 
+            for i in self.header_text:
+                output_file.write(i)
+            # Write definition 
+            for j in self.definition:
+                output_file.write(j)
+            output_file.write('}')
 
 class Cell():
     def __init__(self):
-        self.definition = ""
+        self.definition = []
         pass 
 
 class Pin():
@@ -122,20 +136,20 @@ class Pin():
 
 
 # Test code
-myLibrary = Library('example.lib')
-print(myLibrary.name)
+myLibrary = Library('example2.txt')
+my_output = 'output.txt'
+myLibrary.export(my_output)
+
+
+
 #print(myLibrary.definition)
-for myCell in myLibrary:
-  print(f"|   found cell object called '{myCell.name}' (with {len(myCell.definition)}-byte definition)")
-  if myCell.name == "INV_X3N_A9PP96CTL_C20":
-    print(f"{myLibrary.definition}")
-    print(f"{myCell.definition}")
+#for myCell in myLibrary:
+#  print(f"|   found cell object called '{myCell.name}' (with {len(myCell.definition)}-byte definition)")
+  # if myCell.name == "INV_X3N_A9PP96CTL_C20":
+  #  print(f"{myLibrary.definition}")
+  #  print(f"{myCell.definition}")
 
-# This is temporary test code
-    temp_output = open('output.txt','w')
-    temp_output.write(myCell.definition)
 
-myLibrary.close_file()
 
 
 # Pattern for getting cell names
