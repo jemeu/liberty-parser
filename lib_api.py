@@ -165,7 +165,7 @@ def byte_conversion(byte_val):
         else:
             byte_val /= 1024
 
-# Test 
+# Gets the input file
 if len(sys.argv) > 1:
   input_file = sys.argv[1]
 else:
@@ -182,9 +182,9 @@ print(f"Peak memory use: {byte_conversion(peak_memory)}")
 tracemalloc.stop()
 
 
-# Checks against 
+# Checks against doing each line individually
 tracemalloc.start()
-file2 = open('example.lib')
+file2 = open(input_file)
 mylist = []
 for line in file2:
     mylist.append(line)
