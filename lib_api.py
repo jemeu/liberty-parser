@@ -1,5 +1,6 @@
 import re
 import sys
+import tracemalloc
 
 # The plan here is to maybe set a chunk size of maybe 100 lines
 
@@ -128,10 +129,11 @@ class Library(Group):
             output_file.write('}')
 
 
-    def smash(self,file = None):
+    def smash(self,file = None,exclude = None):
         for cell in self:
-            file = f'{cell.name}.debug.lib'
-            cell.export(file)
+            if cell.name not in exclude:
+                file = f'{cell.name}.debug.lib'
+                cell.export(file)
     
 
 
@@ -154,18 +156,29 @@ class Pin():
     def __init__(self):
         pass   
 
+def byte_conversion(byte_val):
+    for potential_unit in ['B','KB','MB','GB','TB','PB','EB']:
+        if byte_val < 1024.000:
+            return f"{byte_val:.3f} {potential_unit}"
+        else:
+            byte_val /= 1024
+
+
+
+  
+
+# Test 
 if len(sys.argv) > 1:
   input_file = sys.argv[1]
 else:
   input_file = 'example2.txt'
-  
 
-# Test code
+tracemalloc.start()
 myLibrary = Library(input_file)
 myLibrary.export('OUTPUTOASFJOHHUASIJFHSIJ HDIUASHDI ASIUHDISAHUDISAH.txt',['INV_X8N_A9PP96CTL_C20','INV_X10N_A9PP96CTL_C20'])
 
 
-#for cell in myLibrary:
-#  #print(f"Within for loop, found {cell.name}")
-#  my_output = f'{cell.name}.lib'
-#  myLibrary.export(my_output,cell)
+current_memory,peak_memory = tracemalloc.get_traced_memory()
+print(f"Current memory use: {byte_conversion(current_memory)}")
+print(f"Peak memory use: {byte_conversion(peak_memory)}")
+tracemalloc.stop()
