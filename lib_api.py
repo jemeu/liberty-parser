@@ -169,7 +169,7 @@ def byte_conversion(byte_val):
 if len(sys.argv) > 1:
   input_file = sys.argv[1]
 else:
-  input_file = 'example2.txt'
+  input_file = 'example.lib'
 
 tracemalloc.start()
 myLibrary = Library(input_file)
@@ -180,3 +180,15 @@ print(f"Current memory use: {byte_conversion(current_memory)}")
 print(f"Peak memory use: {byte_conversion(peak_memory)}")
 
 tracemalloc.stop()
+
+
+# Checks against 
+tracemalloc.start()
+file2 = open('example.lib')
+mylist = []
+for line in file2:
+    mylist.append(line)
+current_memory,peak_memory = tracemalloc.get_traced_memory()
+print(f"Current memory use: {byte_conversion(current_memory)}")
+print(f"Peak memory use: {byte_conversion(peak_memory)}")
+tracemalloc.stop
