@@ -163,10 +163,6 @@ def byte_conversion(byte_val):
         else:
             byte_val /= 1024
 
-
-
-  
-
 # Test 
 if len(sys.argv) > 1:
   input_file = sys.argv[1]
@@ -177,8 +173,8 @@ tracemalloc.start()
 myLibrary = Library(input_file)
 myLibrary.export('OUTPUTOASFJOHHUASIJFHSIJ HDIUASHDI ASIUHDISAHUDISAH.txt',['INV_X8N_A9PP96CTL_C20','INV_X10N_A9PP96CTL_C20'])
 
-
 current_memory,peak_memory = tracemalloc.get_traced_memory()
 print(f"Current memory use: {byte_conversion(current_memory)}")
 print(f"Peak memory use: {byte_conversion(peak_memory)}")
+
 tracemalloc.stop()
