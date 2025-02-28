@@ -1,5 +1,5 @@
 import re
-
+import sys
 
 # The plan here is to maybe set a chunk size of maybe 100 lines
 
@@ -60,7 +60,7 @@ class Library(Group):
         if self.header_text[-1].endswith("\n"):
             self.header_text = self.header_text[:-1]
 
-        self.definition = self.header_text
+        self.definition = self.header_text # Q) Why clone the header_text attribute?
 
     def __iter__(self):
         return self
@@ -75,7 +75,7 @@ class Library(Group):
         self.file.seek(self.readptr)
         line = self.file.readline() # readline) returns an empty string '' when end-of-file is reached         
         while line: 
-            if re.match('^\s*cell\s*\(',line):
+            if re.search('\s*cell\s*\(',line):
                 if myCell == None:
                     # re-parse the line with a more complex regex to extract the cell name
                     match = re.match(r'^\s*cell\s*\("?([^")]+)"?\)', line)
@@ -115,13 +115,13 @@ class Library(Group):
     def close_file(self):
         self.file.close()
 
-    def export(self,path):
+    def export(self,path,cell):
         with open(path,'w') as output_file:
             # Write header 
             for i in self.header_text:
                 output_file.write(i)
             # Write definition 
-            for j in self.definition:
+            for j in cell.definition:
                 output_file.write(j)
             output_file.write('}')
 
@@ -134,11 +134,17 @@ class Pin():
     def __init__(self):
         pass   
 
+if len(sys.argv) > 1:
+  input_file=sys.argv[1]
+else:
+  input_file='../example2.txt'
 
 # Test code
-myLibrary = Library('example2.txt')
-my_output = 'output.txt'
-myLibrary.export(my_output)
+myLibrary = Library(input_file)
+for cell in myLibrary:
+  #print(f"Within for loop, found {cell.name}")
+  my_output = f'{cell.name}.lib'
+  myLibrary.export(my_output,cell)
 
 
 
