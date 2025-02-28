@@ -75,7 +75,7 @@ class Library(Group):
         self.file.seek(self.readptr)
         line = self.file.readline() # readline) returns an empty string '' when end-of-file is reached         
         while line: 
-            if re.search('\s*cell\s*\(',line):
+            if re.match('^\s*cell\s*\(',line):
                 if myCell == None:
                     # re-parse the line with a more complex regex to extract the cell name
                     match = re.match(r'^\s*cell\s*\("?([^")]+)"?\)', line)

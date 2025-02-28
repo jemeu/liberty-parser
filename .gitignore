@@ -163,7 +163,7 @@ cython_debug/
 # This is all stuff I wrote
 
 # lib files
-lib/example.lib
+example.lib
 
 # example python file
 read_lib_cell.py
