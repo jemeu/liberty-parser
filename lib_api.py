@@ -57,8 +57,8 @@ class Library(Group):
                 
         # Removes any extra blank lines at the end of the file
         # (as blank lines will still have a newline character at the end, resulting in two lines being printed)                   
-        if self.header_text[-1].endswith("\n"):
-            self.header_text = self.header_text[:-1]
+        # if self.header_text[-1].endswith("\n"):
+        #     self.header_text = self.header_text[:-1]
 
         self.definition = self.header_text # Q) Why clone the header_text attribute?
 
@@ -116,15 +116,17 @@ class Library(Group):
     def close_file(self):
         self.file.close()
 
-    def export(self,path,cell):
+    # Rename this to strip?
+    def export(self,path,exclude = None):
         with open(path,'w') as output_file:
-            # Write header 
-            for i in self.header_text:
-                output_file.write(i)
-            # Write definition 
-            for j in cell.definition:
-                output_file.write(j)
+            for line in self.header_text:
+                output_file.write(line)
+            for cell in self:
+                if cell.name not in exclude:
+                    for line in cell.definition:
+                        output_file.write(line)
             output_file.write('}')
+
 
     def smash(self,file = None):
         for cell in self:
@@ -160,7 +162,7 @@ else:
 
 # Test code
 myLibrary = Library(input_file)
-myLibrary.smash()
+myLibrary.export('OUTPUTOASFJOHHUASIJFHSIJ HDIUASHDI ASIUHDISAHUDISAH.txt',['INV_X8N_A9PP96CTL_C20','INV_X10N_A9PP96CTL_C20'])
 
 
 #for cell in myLibrary:
