@@ -81,9 +81,9 @@ class Library(Group):
                     # re-parse the line with a more complex regex to extract the cell name
                     match = re.match(r'^\s*cell\s*\("?([^")]+)"?\)', line)
                     if match:
-                        print(f"| creating new Cell object")
                         myCell = Cell()
                         myCell.name = match.group(1)
+                        print(f"| creating new Cell object: {myCell.name}")
                         myCell.definition.append(line)
                         myCell.library = self
                     else:
@@ -129,7 +129,9 @@ class Library(Group):
             output_file.write('}')
 
 
-    def smash(self,file = None,exclude = None):
+    def smash(self, exclude = None):
+        if exclude == None:
+            exclude = []
         for cell in self:
             if cell.name not in exclude:
                 file = f'{cell.name}.debug.lib'
@@ -171,8 +173,8 @@ else:
 
 tracemalloc.start()
 myLibrary = Library(input_file)
-myLibrary.export('OUTPUTOASFJOHHUASIJFHSIJ HDIUASHDI ASIUHDISAHUDISAH.txt',['INV_X8N_A9PP96CTL_C20','INV_X10N_A9PP96CTL_C20'])
-
+# myLibrary.export('exported_library.txt',['INV_X8N_A9PP96CTL_C20','INV_X10N_A9PP96CTL_C20'])
+myLibrary.smash()
 current_memory,peak_memory = tracemalloc.get_traced_memory()
 print(f"Current memory use: {byte_conversion(current_memory)}")
 print(f"Peak memory use: {byte_conversion(peak_memory)}")
