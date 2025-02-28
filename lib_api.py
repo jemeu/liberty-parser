@@ -2,8 +2,6 @@ import re
 import sys
 import tracemalloc
 
-# The plan here is to maybe set a chunk size of maybe 100 lines
-
 class Group:
     '''
     Parent class
