@@ -75,7 +75,7 @@ class Library(Group):
         self.file.seek(self.readptr)
         line = self.file.readline() # readline) returns an empty string '' when end-of-file is reached         
         while line: 
-            if re.search('\s*cell\s*\(',line):
+            if re.search('^\s*cell\s*\(',line):
                 if myCell == None:
                     # re-parse the line with a more complex regex to extract the cell name
                     match = re.match(r'^\s*cell\s*\("?([^")]+)"?\)', line)
@@ -83,7 +83,8 @@ class Library(Group):
                         print(f"| creating new Cell object")
                         myCell = Cell()
                         myCell.name = match.group(1)
-                        myCell.definition.append(line) 
+                        myCell.definition.append(line)
+                        myCell.library = self
                     else:
                         # the syntax of the line doesn't conform to Liberty specification
                         print(f"syntax error on line '{line}'")
@@ -125,40 +126,44 @@ class Library(Group):
                 output_file.write(j)
             output_file.write('}')
 
+    def smash(self,file = None):
+        for cell in self:
+            file = f'{cell.name}.debug.lib'
+            cell.export(file)
+    
+
+
 class Cell():
     def __init__(self):
         self.definition = []
         pass 
+
+    def export(self,file = None):
+        with open (file, 'w') as writefile:
+            for line in self.library.header_text:
+                writefile.write(line)
+
+            for line in self.definition:
+                writefile.write(line)
+
+            writefile.write('}')
 
 class Pin():
     def __init__(self):
         pass   
 
 if len(sys.argv) > 1:
-  input_file=sys.argv[1]
+  input_file = sys.argv[1]
 else:
-  input_file='../example2.txt'
+  input_file = 'example2.txt'
+  
 
 # Test code
 myLibrary = Library(input_file)
-for cell in myLibrary:
-  #print(f"Within for loop, found {cell.name}")
-  my_output = f'{cell.name}.lib'
-  myLibrary.export(my_output,cell)
+myLibrary.smash()
 
 
-
-#print(myLibrary.definition)
-#for myCell in myLibrary:
-#  print(f"|   found cell object called '{myCell.name}' (with {len(myCell.definition)}-byte definition)")
-  # if myCell.name == "INV_X3N_A9PP96CTL_C20":
-  #  print(f"{myLibrary.definition}")
-  #  print(f"{myCell.definition}")
-
-
-
-
-# Pattern for getting cell names
-# repattern = r'cell\s*\((.*?)\)'
-# patterntest2 = re.findall(repattern,'cell (a;lksdfjal;kdsfa;lsdjfa;dfaljfalf) { as}{  ]asds daadssas }  wfwfewf cell   cell(11111111)')
-# print(patterntest2)
+#for cell in myLibrary:
+#  #print(f"Within for loop, found {cell.name}")
+#  my_output = f'{cell.name}.lib'
+#  myLibrary.export(my_output,cell)
